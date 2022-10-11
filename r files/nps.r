@@ -44,7 +44,7 @@ territories <- c("AS", "GU", "MP", "PR", "VI")
 ## national parks #########################################################
 ## the NPS data set has 21 columns. I only want the state, area type, area,
 ## and the geometry. The geometry column includes the coordinates necessary
-## to create the map polygon. There are 23 types of park types which I wanted
+## to create the map polygon. There are 23 types of park which I wanted
 ## to condense in the first mutate() call. In the second mutate call, I create 
 ## and fill in a variable that designates whether I've been to the park. You 
 ## will need to change these lines (or delete them) based on whether you've 
@@ -54,14 +54,14 @@ nps <- read_sf("./shapefiles/original/nps/NPS_-_Land_Resources_Division_Boundary
     select(STATE, UNIT_TYPE, PARKNAME, Shape__Are, geometry) %>% # select only certain columns from the nps data
     filter(STATE %!in% territories) %>%  # filter out the outlying islands and associated territories
     mutate(type = case_when(UNIT_TYPE == "International Historic Site" ~ "International Historic Site", # there's 23 types of national park, I wanted to reduce this number.
-                UNIT_TYPE == "National Battlefield Site" ~ "Military or Battlefield", # lines 56-77 reduce the number of park types
-                UNIT_TYPE == "National Military Park" ~ "Military or Battlefield", 
-                UNIT_TYPE == "National Battlefield" ~ "Military or Battlefield",
-                UNIT_TYPE == "National Historical Park" ~ "Historical Park, Site, Monument, or Memorial",
-                UNIT_TYPE == "National Historic Site" ~ "Historical Park, Site, Monument, or Memorial",
-                UNIT_TYPE == "National Historic Trail" ~ "Historical Park, Site, Monument, or Memorial",
-                UNIT_TYPE == "National Memorial" ~ "Historical Park, Site, Monument, or Memorial",
-                UNIT_TYPE == "National Monument" ~ "Historical Park, Site, Monument, or Memorial",
+                UNIT_TYPE == "National Battlefield Site" ~ "National Military or Battlefield", # lines 56-77 reduce the number of park types
+                UNIT_TYPE == "National Military Park" ~ "National Military or Battlefield", 
+                UNIT_TYPE == "National Battlefield" ~ "National Military or Battlefield",
+                UNIT_TYPE == "National Historical Park" ~ "National Historical Park, Site, Monument, or Memorial",
+                UNIT_TYPE == "National Historic Site" ~ "National Historical Park, Site, Monument, or Memorial",
+                UNIT_TYPE == "National Historic Trail" ~ "National Historical Park, Site, Monument, or Memorial",
+                UNIT_TYPE == "National Memorial" ~ "National Historical Park, Site, Monument, or Memorial",
+                UNIT_TYPE == "National Monument" ~ "National Historical Park, Site, Monument, or Memorial",
                 UNIT_TYPE == "National Preserve" ~ "National Preserve, Reserve, or Recreation Area",
                 UNIT_TYPE == "National Reserve" ~ "National Preserve, Reserve, or Recreation Area",
                 UNIT_TYPE == "National Recreation Area" ~ "National Preserve, Reserve, or Recreation Area",
@@ -74,7 +74,7 @@ nps <- read_sf("./shapefiles/original/nps/NPS_-_Land_Resources_Division_Boundary
                 UNIT_TYPE == "National Park" ~ "National Park or Parkway",
                 UNIT_TYPE == "Park" ~ "National Park or Parkway",
                 UNIT_TYPE == "Parkway" ~ "National Park or Parkway",
-                UNIT_TYPE == "Other Designation" ~ "Other")) %>% 
+                UNIT_TYPE == "Other Designation" ~ "Other National Land Area")) %>% 
     mutate(visited = case_when(PARKNAME == "Joshua Tree" ~ "visited", # this creates a new variable "visited" in the nps data
                                 PARKNAME == "Redwood" ~ "visited", # it marks the park as visited if the park name matches
                                 PARKNAME == "Santa Monica Mountains" ~ "visited", 
@@ -82,6 +82,7 @@ nps <- read_sf("./shapefiles/original/nps/NPS_-_Land_Resources_Division_Boundary
                                 PARKNAME == "Kings Canyon" ~ "visited",
                                 PARKNAME == "Lewis and Clark" ~ "visited",
                                 PARKNAME == "Mount Rainier" ~ "visited",
+                                PARKNAME == "Siskiyou National Forest" ~ "visited",
                                 TRUE ~ "not visited")) %>%  # all other parks are marked as "not visited"
     shift_geometry(preserve_area = FALSE, # resizes alaska to fit with the size of the other states
                     position = "below") %>% # moves alaska so it's near hawaii

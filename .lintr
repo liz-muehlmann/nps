@@ -1,4 +1,6 @@
+lintr::use_lintr(type = "tidyverse")
 linters: linters_with_defaults(
     line_length_linter(120),
-    commented_code_linter = NULL) # see vignette("lintr")
+    trailing_whitespace_linter(allow_empty_lines = TRUE, allow_in_strings = FALSE),
+    commented_code_linter = NULL)
 encoding: "UTF-8"
