@@ -4,6 +4,7 @@ library(operator.tools)     # %!in% function
 library(tigris)             # used to shift Alaska & Hawaii
 library(leaflet)            # map making
 library(raster)
+library(units)
 ## load the shapefile used for the base map ###############################
 ## this file was created in r files part I
 states <- read_sf("./shapefiles/shifted/usa/usa.shp")
@@ -26,9 +27,10 @@ territories <- c("AS", "GU", "MP", "PR", "VI")
 ## will need to change these lines (or delete them) based on whether you've 
 ## visited any national parks.
 
-nps2 <- st_read("./shapefiles/original/nps/NPS_-_Land_Resources_Division_Boundary_and_Tract_Data_Service.shp") 
-
-st_crs(nps2)
-
-
+nps2 <- shapefile("C:/Users/lizmo/Downloads/NPS/NPS_-_Land_Resources_Division_Boundary_and_Tract_Data_Service.shp")
+# area <- st_area(nps2) 
+# nps2$area <- set_units(area, km^2)
+# nps2$acres <- nps2$area*247.1
+crs(nps2)
+nps2$area <- area(nps2) / 1000000
 

@@ -19,8 +19,9 @@ library(shiny)          # interactivity
 
 
 ## load data ################################################################
-usa_base <- read_sf("./shapefiles/shifted/usa/usa.shp")   
-nps <- read_sf("./shapefiles/shifted/nps/nps.shp")
+usa_base <- as_Spatial(read_sf("./shapefiles/shifted/usa/usa.shp"))
+nps <- as_Spatial(read_sf("./shapefiles/shifted/nps/nps.shp"))
+
 
 ## calculate area devoted to public land ####################################
 ## the census TIGER/Shapefile reports land area (ALAND) in square meters while 
