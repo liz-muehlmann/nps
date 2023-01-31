@@ -50,10 +50,10 @@ territories <- c("AS", "GU", "MP", "PR", "VI")
 ## will need to change these lines (or delete them) based on whether you've 
 ## visited any national parks.
  
-nps <- read_sf("./shapefiles/original/nps/NPS_-_Land_Resources_Division_Boundary_and_Tract_Data_Service.shp")  %>% # load shapefile
-    select(STATE, UNIT_TYPE, PARKNAME, Shape__Are, geometry) %>% # select only certain columns from the nps data
+nps <- read_sf("./shapefiles/acres/NPS_-_Land_Resources_Division_Boundary_and_Tract_Data_Service.shp")  %>% # load shapefile
+    select(STATE, UNIT_TYPE, PARKNAME, area, geometry) %>% # select only certain columns from the nps data
     filter(STATE %!in% territories) %>%  # filter out the outlying islands and associated territories
-    mutate(type = case_when(UNIT_TYPE == "International Historic Site" ~ "International Historic Site", # there's 23 types of national park, I wanted to reduce this number.
+    mutate(type = case_when(UNIT_TYPE == "International Historic Site" ~ "International Historic Site", # there's 23 types of national land, I wanted to reduce this number.
                 UNIT_TYPE == "National Battlefield Site" ~ "National Military or Battlefield", # lines 56-77 reduce the number of park types
                 UNIT_TYPE == "National Military Park" ~ "National Military or Battlefield", 
                 UNIT_TYPE == "National Battlefield" ~ "National Military or Battlefield",
@@ -89,7 +89,7 @@ nps <- read_sf("./shapefiles/original/nps/NPS_-_Land_Resources_Division_Boundary
     sf::st_transform("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs") # changes the geographic data from NAD83 to WGS84
 
 ## save shifted map #######################################################
-# st_write(nps, "shapefiles/shifted/nps/nps.shp") # saves the data "nps" to the path specified
+#st_write(nps, "shapefiles/shifted/nps/nps.shp") # saves the data "nps" to the path specified
 
 map <- leaflet() %>%
   addPolygons(data = states,
