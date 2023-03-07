@@ -1,13 +1,19 @@
 ## part IV: adding interactivity ########################################
 ##
 ## this file:
+##    - calculates the areas of National Park land
+##    - sets custom colors for each land type
+##    - creates Shiny app
 ##
-
-setwd("/Users/lizmo/Documents/GitHub/nps/")
+## data source:
+##    - Shapefiles created in the usa.r, nps.r, and state_parks.r files
+##
+## next:
+##    - Part VI: create maps for each state
 
 ## load libraries ##########################################################
 ## if you haven't downloaded these packages yet, you'll need to install them
-## the syntax is: install.packages("package-name"). You only need to install
+## first using: install.packages("package-name"). You only need to install
 ## the packages once, but you'll need to load the libraries every time.
 
 library(tidyverse)      # useful data manipulation tools
@@ -17,11 +23,20 @@ library(leaflet)        # map creation
 library(operator.tools) # not-in function
 library(shiny)          # interactivity
 
-
 ## load data ################################################################
+## Since I'm using shiny, the shapefile has to be read into R as an s4 object.
+## s4 is one of R's three types of object-oriented systems. The shapefiles saved
+## in the other files are sf, tbl_df, tbl, and data.frames, but not s4 objects.
+## you can check what class a file is in by using class(usa_base). Shiny requires
+## shapefiles be s4 objects in order to read data from them. That means we have 
+## to add the as_Spatial() function call when loading the saved .shp files.
+
 usa_base <- as_Spatial(read_sf("./shapefiles/shifted/usa/usa.shp"))
 nps <- as_Spatial(read_sf("./shapefiles/shifted/nps/nps.shp"))
 
+## load the data so I can access the information.
+usa_df <- read_sf("./shapefiles/shifted/usa/usa.shp")
+nps_df <- read_sf("./shapefiles/shifted/nps/nps.shp")
 
 ## calculate area devoted to public land ####################################
 ## the census TIGER/Shapefile reports land area (ALAND) in square meters while 
@@ -31,15 +46,8 @@ nps <- as_Spatial(read_sf("./shapefiles/shifted/nps/nps.shp"))
 ## areas together. I'll then divide by the size of the state to get the percentage
 ## devoted to public land.
 
-# usa_base$acres <- usa_base$ALAND/4047
-# 
-# nps_areas <- nps  %>%
-#              st_drop_geometry()  %>% 
-#              group_by(STATE)  %>% 
-#              mutate(area = sum(Shape__Are))  %>% 
-#              distinct(STATE, .keep_all = TRUE)
-# 
-# usa_base$public <- nps_areas$area/usa_base$acres
+# nps_areas <- 
+
 
 ## define colors ############################################################
 ## any modifications to the map need to be made before the map widget is called.
@@ -60,40 +68,6 @@ nps_color <- colorFactor(c("#B2AC88", # national historical
                            "#899B7C", # trails
                            "#AFAC99"), nps$type) # other
 
-# ## create base & nps map ####################################################
-# map <- leaflet() %>%
-#   addPolygons(data = usa_base,
-#     smoothFactor = 0.2,
-#     fillColor = "#808080",
-#     stroke = TRUE,
-#     weight = 0.5,
-#     opacity = 0.5,
-#     color = "#808080",
-#     highlightOptions = highlightOptions(
-#       weight = 0.5,
-#       color = "#000000",
-#       fillOpacity = 0.7,
-#       bringToFront = FALSE),
-#     group = "Base Map") %>%  
-#   addPolygons(data = nps,
-#     smoothFactor = 0.2,                 
-#     fillColor =  ~nps_color(type),
-#     fillOpacity = 1,
-#     stroke = TRUE,
-#     weight = 1,     
-#     opacity = 0.5,                       
-#     color = "#354f52",             
-#     highlight = highlightOptions(
-#       weight = 3,
-#       color = "#fff",
-#       fillOpacity = 0.8,
-#       bringToFront = TRUE),
-#     group = "National Parks")  %>%
-#   addLayersControl(
-#     baseGroups = "Base Map",
-#     overlayGroups = "National Parks",
-#     options = layersControlOptions(collapsed = FALSE))
-
 ui <- fillPage(tags$head(includeCSS("C:/Users/lizmo/Documents/GitHub/nps/r files/shiny/www/styles.css")),
               title = "National Parks I've Visited",
               bootstrap = TRUE,
@@ -111,7 +85,7 @@ ui <- fillPage(tags$head(includeCSS("C:/Users/lizmo/Documents/GitHub/nps/r files
                                 align = "center",
                                 style = "height:auto",
                                 p(class = "info-title", 
-                                  "National Park Data:"),
+                                  "State & National Park Information:"),
                                 textOutput("info_text")))))
 
 server <- function(input, output) {

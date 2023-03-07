@@ -1,4 +1,4 @@
-## part II: national park processing #######################################
+## part II: state park processing #######################################
 ##
 ## this file:
 ##      - loads, processes, & saves the state park service boundaries

@@ -3,6 +3,8 @@
 ## this file:
 ##      - loads and processes the national park service boundaries
 ##      - saves the shifted national park service boundaries
+##        - national
+##        - by state
 ##
 ## data source:
 ##      - Shapefiles can be downloaded by going to https://public-nps.opendata.arcgis.com/
@@ -50,8 +52,8 @@ territories <- c("AS", "GU", "MP", "PR", "VI")
 ## will need to change these lines (or delete them) based on whether you've 
 ## visited any national parks.
  
-nps <- read_sf("./shapefiles/acres/NPS_-_Land_Resources_Division_Boundary_and_Tract_Data_Service.shp")  %>% # load shapefile
-    select(STATE, UNIT_TYPE, PARKNAME, area, geometry) %>% # select only certain columns from the nps data
+nps <- read_sf("./shapefiles/original/nps/NPS_-_Land_Resources_Division_Boundary_and_Tract_Data_Service.shp")  %>% # load shapefile
+    select(STATE, UNIT_TYPE, PARKNAME, Shape__Are, geometry) %>% # select only certain columns from the nps data
     filter(STATE %!in% territories) %>%  # filter out the outlying islands and associated territories
     mutate(type = case_when(UNIT_TYPE == "International Historic Site" ~ "International Historic Site", # there's 23 types of national land, I wanted to reduce this number.
                 UNIT_TYPE == "National Battlefield Site" ~ "National Military or Battlefield", # lines 56-77 reduce the number of park types
@@ -123,3 +125,17 @@ map <- leaflet() %>%
     baseGroups = "Base Map",
     overlayGroups = "National Parks",
     options = layersControlOptions(collapsed = FALSE))
+
+## save national parks by state ############################################################
+## there's too many state parks to map them all at the same time. I split them up by state
+## which means I also need to split the national parks by state.
+## first, use split() to separate the parks by state. Next get the names of the split data
+## sets - essentially, the state names. Finally, loop through and write each shapefile
+## by state
+
+split_states <- split(nps, f = nps$STATE) # split the data by state
+
+all_names <- names(split_states)   
+# for(name in all_names){            
+#      st_write(split_states[[name]], paste0("shapefiles/shifted/nps/nps_by_state/", name, '.shp')) 
+# }
