@@ -1,2 +1,4 @@
-/shapefiles
-_site/shapefiles
+.\shapefiles\
+shapefiles\
+\shapefiles
+.dvc/config
