@@ -1,3 +1,5 @@
 /shapefiles/acres/
 /shapefiles/original/
 /shapefiles/shifted/
+/shapefiles
+.dvc/config
