@@ -1,4 +1,7 @@
 [core]
     remote = remote
+[cache]
+    type = "hardlink,symlink"
 ['remote "remote"']
     url = gdrive://1GouelHohsJQ650xuYqhBpdrpZu4FT9au/nps
+    gdrive_acknowledge_abuse = true
